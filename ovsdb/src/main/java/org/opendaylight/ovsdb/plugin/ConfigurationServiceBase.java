@@ -1,17 +1,12 @@
 package org.opendaylight.ovsdb.plugin;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.util.concurrent.ListenableFuture;
-import org.eclipse.osgi.framework.console.CommandInterpreter;
 import org.eclipse.osgi.framework.console.CommandProvider;
-import org.opendaylight.controller.sal.connection.ConnectionConstants;
 import org.opendaylight.controller.sal.core.Node;
 import org.opendaylight.controller.sal.utils.Status;
 import org.opendaylight.controller.sal.utils.StatusCode;
@@ -406,66 +401,4 @@ public abstract class ConfigurationServiceBase implements OVSDBConfigService,
         return _insertTableRow(node, transaction, insertIdx, tableName,
                                uuidName);
     }
-
-    // Service operations
-
-    public void _connect(String nodeName, CommandInterpreter ci) {
-
-        String server = ci.nextArgument();
-        if (server == null) {
-            ci.println("Please enter valid IP-Address");
-            return;
-        }
-
-        try {
-            InetAddress ia = InetAddress.getByName(server);
-            server = ia.getHostAddress();
-        }  catch (UnknownHostException e) {
-            logger.error("Unable to resolve " + server, e);
-            ci.println("Please enter valid IP-Address");
-            return;
-        }
-
-        String port = ci.nextArgument();
-        if (port == null) {
-            port = ConfigurationServiceBase.DEFAULT_OVSDB_PORT;
-        }
-
-        ci.println("Connecting to ovsdb server: "+server+":"+port+" ... ");
-        Map<ConnectionConstants, String> params = new HashMap<>();
-        params.put(ConnectionConstants.ADDRESS, server);
-        params.put(ConnectionConstants.PORT, port);
-        Node node = connectionService.connect(nodeName, params);
-        if (node != null) ci.println("Node Name: " + node);
-        else ci.println("Could not connect to Node " + nodeName);
-    }
-
-    public void _printCache (CommandInterpreter ci) {
-        String nodeName = ci.nextArgument();
-        if (nodeName == null) {
-            ci.println("Please enter Node Name");
-            return;
-        }
-        Node node = Node.fromString(nodeName);
-        if (node == null) {
-            ci.println("Invalid Node");
-            return;
-        }
-        inventoryServiceInternal.printCache(node);
-    }
-
-    public void _forceConnect (CommandInterpreter ci) {
-        String force = ci.nextArgument();
-        if (force.equalsIgnoreCase("YES")) {
-            forceConnect = true;
-        }
-        else if (force.equalsIgnoreCase("NO")) {
-            forceConnect = false;
-        }
-        else {
-            ci.println("Please enter YES or NO.");
-        }
-        ci.println("Current ForceConnect State : "+forceConnect);
-    }
-
 }
