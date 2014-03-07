@@ -43,5 +43,13 @@ osgi>
 HOW TO USE IT
 =============
 
-Coming soon with examples and sample REST-API
+Sample POSTMAN script : https://www.getpostman.com/collections/e89c172d759c87ec944a
 
+1. Use the "Connect Controller to OVSDB Switch" script to connect the Controller to your switch that supports hardware-vtep schema
+   -> Change the Ip-address & Port-number based on your switch configurations. And change the Connection-Name to your taste.
+   -> In this sample POSTMAN collection, the Connection-Name is "HOST1" and IP-address 216.129.126.126 & Port 6640
+
+2. As you can see, these REST-APIs are for the OpenVSwitchd schema and not for the hardware_vtep schema.
+   -> All you have to do is to change the table names in the REST-API and update the JSON that fits the hardware_vtep schema.
+     For example : List all Bridge => http://localhost:8080/ovsdb/nb/v2/node/OVS/HOST1/tables/bridge/rows
+     You can change it to List all Physical_Switch => http://localhost:8080/ovsdb/nb/v2/node/OVS/HOST1/tables/Physical_Switch/rows
